@@ -6,7 +6,7 @@ class Player extends Entity {
             this.left = false;
             this.removed = false;
 
-            this.sprites = ["res/playerLeft.png", "res/playerIdle.png", "res/playerRight.png"]
+            this.sprites = ["./res/playerLeft.png", "./res/playerIdle.png", "./res/playerRight.png"]
             this.shotLvl = 1;
         }
 
