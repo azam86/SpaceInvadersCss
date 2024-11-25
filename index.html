@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: 'Monogram';
-            src: url("res/monogram.ttf");;
+            src: url("res/monogram.ttf");
         }
 
         body {
@@ -263,6 +263,7 @@
         }
     }
     let musicsound = new Audio("res/music.mp3");
+    musicsound.volume = 0.3;
     function startGame() {
        
         musicsound.play();
