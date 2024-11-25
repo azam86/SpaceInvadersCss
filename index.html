@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: 'Monogram';
-            src: url("res/monogram.ttf");
+            src: url("res/monogram.ttf");;
         }
 
         body {
@@ -158,6 +158,9 @@
             position: absolute;
             left: 1024px;
         }
+        #highScore {
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -175,7 +178,16 @@
 <button onmousedown="playerLeft(true)" onmouseup="playerLeft(false)" onmouseleave="playerLeft(false)">←</button>
 <button onmousedown="playerRight(true)" onmouseup="playerRight(false)" onmouseleave="playerRight(false)">→</button>
 <button onmousedown="playerShot()">Atirar</button>
-<div id="dicas">Clique no botão "Iniciar" para começar. <br> <br>Controles do Teclado: <br> Mover - A, <br> Atirar - Barra de Espaço <br><br> Aviso - Use tela cheia (F12) para uma expêriencia melhor. Diminua o Zoom (Ctrl + Scroll Down) caso a tela ocupe muito espaço.</div>
+<div id="dicas">
+    <div>
+        Clique no botão "Iniciar" para começar. <br> <br>Controles do Teclado: <br> Mover - A, <br> Atirar - Barra de Espaço <br><br> Aviso - Use tela cheia (F12) para uma expêriencia melhor. Diminua o Zoom (Ctrl + Scroll Down) caso a tela ocupe muito espaço.
+    </div>
+    <br>
+    <div id="highScore">
+        Melhor Pontuação: 0
+    </div>
+</div>
+
 <script src="Entity.js"></script>
 <script src="Enemy.js"></script>
 <script src="Player.js"></script>
@@ -262,8 +274,7 @@
             gameOverDiv = -1;
         }
     }
-    let musicsound = new Audio("res/music.mp3");
-    musicsound.volume = 0.3;
+    let musicsound = new Audio("res/music.wav");
     function startGame() {
        
         musicsound.play();
@@ -299,7 +310,9 @@
     const WIDTH = document.getElementById("fundo").offsetWidth;
     const HEIGHT = document.getElementById("fundo").offsetHeight;
     let gameOverDiv = -1;
+    let highScore = 0;
     function gameOver() {
+     
         let sound = new Audio("res/gameover.mp3");
         sound.play();
         gameOverDiv = document.createElement("div");
@@ -319,8 +332,10 @@
 
     let score = 0;
     let xshake = 0;
-    document.getElementById("score").innerHTML = score;
+    document.getElementById("score").innerHTML =  score;
     function gameLoop() {
+        highScore = Math.max(score, highScore);
+        document.getElementById("highScore").innerHTML = "Melhor Pontuação: " + highScore;
         for(let i = 0; i < stars.length; i++) {
             
             stars[i].y += stars[i].size;
