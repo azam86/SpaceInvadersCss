@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @font-face {
+            font-family: 'Monogram';
+            src: url("res/monogram.ttf");;
+        }
+
+        body {
+            margin: 0;
+            image-rendering: pixelated;
+            font-family: 'Monogram';
+            font-size: 70px;
+        }
+
+        button {
+           font-size: 50px;
+           position: relative;
+           top: 0px;
+           left: 1024px;
+        }
+        #fundo {
+            background-color: black;
+            width: 1024px;
+            height: 1080px;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1000px) {
+            button {
+                top: 1080px;
+                left: 0px;
+                width: 200px;
+                margin:20px;
+            } 
+            #dicas {
+                display: none;
+            }
+        }
+        #player {
+     
+            width: 64px;
+            height: 64px;
+            position: absolute;
+            background-image: url("res/playerIdle.png");
+            background-size: 100%;
+            z-index: 2;
+        }
+
+        .enemyclass {
+       
+            background-image: url("res/enemy1.gif");
+            background-size: 100%;
+            width: 64px;
+            height: 64px;
+            position: absolute;
+            z-index: 2;
+        }
+
+        .bulletclass {
+            width: 64px;
+            height: 64px;
+            position: absolute;
+            background-image: url("res/shot1.png");
+            background-size: 25%, 100%;
+            background-repeat: no-repeat;
+
+            z-index: 2;
+        }
+
+        .lifebar {
+            color: white;
+            position: absolute;
+     
+            top: 60px;
+            color: rgb(0, 255, 0);
+        }
+
+        #life {
+            left: 160px;
+            top: 65px;
+        }
+
+        #score {
+
+            width: 100%;
+            text-align: center;
+        }
+
+        .gameOver {
+            font-size: 50px;
+            text-align: center;
+            line-height: 550px;
+            vertical-align: middle;
+            position: relative;
+            color: white;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+        
+
+        .healthBar {
+            width: 64px;
+            height: 10px;
+            background-color: rgb(0, 255, 0);
+            position: absolute;
+            z-index: 2;
+            border: 8px solid black
+        }   
+        .starclass {
+            width: 16px;
+            height: 16px;
+            background-color: #49a8df;
+            position: absolute;
+            z-index: 0;
+        }
+
+        #painel {
+            width: 100%;
+            aspect-ratio: 1024/192;
+            background-image: url("res/painel.png");
+            background-size: 100%;
+            position: absolute;
+            z-index: 4;
+        }
+
+        #lifeicon {
+            left: 72px;
+        }
+
+        .circle {
+            border-radius: 90px;
+            width: 0px;
+            background-color: orange;
+            height: 0px;
+            padding: 90px;
+            position: absolute;
+        
+        }
+
+        #shoticon {
+            left: 900px;
+        }
+
+        #shotlvl {
+            left: 810px;
+        }
+
+        #dicas {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            position: absolute;
+            left: 1024px;
+        }
+    </style>
+</head>
+<body>
+<div id="fundo">
+    <div id="painel">
+      
+        <img id="lifeicon" src="res/playerIdle.png" width="64" class="lifebar" alt = "icone de barra de vida">
+        <div id="life" class="lifebar">X</div>
+        <div id="score" class="lifebar"></div>
+        <img id="shoticon" src="res/shot1.png" width="16" class="lifebar" alt="icone de tiro">
+        <div id="shotlvl" class="lifebar">X1</div>
+    </div>
+</div>
+<button onmouseup="startGame()" id="start">Iniciar</button>
+<button onmousedown="playerLeft(true)" onmouseup="playerLeft(false)" onmouseleave="playerLeft(false)">←</button>
+<button onmousedown="playerRight(true)" onmouseup="playerRight(false)" onmouseleave="playerRight(false)">→</button>
+<button onmousedown="playerShot()">Atirar</button>
+<div id="dicas">Clique no botão "Iniciar" para começar. <br> <br>Controles do Teclado: <br> Mover - A, <br> Atirar - Barra de Espaço <br><br> Aviso - Use tela cheia (F12) para uma expêriencia melhor. Diminua o Zoom (Ctrl + Scroll Down) caso a tela ocupe muito espaço.</div>
+<script src="Entity.js"></script>
+<script src="Enemy.js"></script>
+<script src="Player.js"></script>
+<script src="EnemyGenerator.js"></script>
+<script src="Bullet.js"></script>
+<script src="BulletGenerator.js"></script>
+<script src="Star.js"></script>
+<script src="Explosion.js"></script>
+<script src="ExplosionGenerator.js"></script>
+<script>
+    document.addEventListener("keydown", keyDown = (e) => {
+        if(e.keyCode == 82 && player.removed) {
+            let p = document.createElement("div");
+            p.setAttribute("id","player");
+            document.getElementById("fundo").appendChild(p);
+            player.removed = false;
+            player.life = 3;
+            player.render();
+        }
+        if(!running) return;
+        if(e.keyCode == 32) {
+            player.shot(bulletGenerator);
+        }
+        if(e.keyCode == 68) {
+            player.right = true;
+        }
+        if(e.keyCode == 65) {
+            player.left = true;
+        }
+    });
+
+    document.addEventListener("keyup", keyDown = (e) => {
+        if(!running) return;
+        if(e.keyCode == 68) {
+            player.right = false;
+        }
+        if(e.keyCode == 65) {
+            player.left = false;
+        }
+    });
+
+    function playerRight(bool) { if(!running) return; player.right = bool; }
+    function playerLeft(bool)  { if(!running) return; player.left = bool; } 
+    function playerShot()  { if(!running) return; player.shot(bulletGenerator); } 
+
+    function rectRect(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
+        if (r1x + r1w >= r2x &&   
+            r1x <= r2x + r2w &&   
+            r1y + r1h >= r2y &&    
+            r1y <= r2y + r2h) {    
+              return true;
+        }
+        return false;
+    }
+    let timerLoop;
+    let player, enemyGenerator, bulletGenerator;
+    let running = false;
+
+    function resetGame() {
+        if(player.removed) {
+            player = new Player(0,HEIGHT-72);
+            document.getElementById("life").innerHTML = "X" + player.life;
+            let p = document.createElement("div");
+            p.setAttribute("id","player");
+            document.getElementById("fundo").appendChild(p);
+            player.removed = false;
+            player.render();
+        } else {
+            player.life = player.maxLife;
+            player.x = WIDTH/2 - 32;
+        }
+     
+        enemyGenerator.reset();
+        bulletGenerator.reset();
+        player.updateShotLvl(1);
+        let bullets = bulletGenerator.bullets;
+
+        score = 0;
+        document.getElementById("score").innerHTML = score;
+        enemyGenerator = new EnemyGenerator();
+        bulletGenerator = new BulletGenerator();
+        if(gameOverDiv != -1) {
+            gameOverDiv.remove();
+            gameOverDiv = -1;
+        }
+    }
+    let musicsound = new Audio("res/music.wav");
+    function startGame() {
+       
+        musicsound.play();
+        musicsound.loop = true;
+
+        document.getElementById("start").innerHTML = "Reniciar";
+        if(running) {
+            resetGame();
+            return;
+        } 
+        running = true;
+        timerLoop = setInterval(gameLoop, 1000/FPS);
+        player = new Player(0,HEIGHT-72);
+        document.getElementById("life").innerHTML = "X" + player.life;
+        enemyGenerator = new EnemyGenerator();
+        bulletGenerator = new BulletGenerator();
+        let p = document.createElement("div");
+        p.setAttribute("id","player");
+        document.getElementById("fundo").appendChild(p);
+        player.removed = false;
+        player.render();
+        
+        for(let i = 0; i < 15; i++) {
+            createRandomStar();
+        }
+    }
+
+    function lerp(a, b, t) {
+        return a + (b-a) * t;
+    }
+
+    const FPS = 60;
+    const WIDTH = document.getElementById("fundo").offsetWidth;
+    const HEIGHT = document.getElementById("fundo").offsetHeight;
+    let gameOverDiv = -1;
+    function gameOver() {
+        let sound = new Audio("res/gameover.mp3");
+        sound.play();
+        gameOverDiv = document.createElement("div");
+        gameOverDiv.setAttribute("class","gameOver");
+        gameOverDiv.innerHTML = "Game Over";
+        document.getElementById("fundo").appendChild(gameOverDiv);
+    }
+
+    let stars = [];
+
+    function createRandomStar() {
+        let size = 2 + Math.random() * 4;
+        let star = new Star(0 + (Math.random()*(WIDTH-16)), 0 - Math.random() * (WIDTH-16), size);
+        stars.push(star);
+    }
+    let explosionManager = new ExplosionGenerator();
+
+    let score = 0;
+    let xshake = 0;
+    document.getElementById("score").innerHTML = score;
+    function gameLoop() {
+        for(let i = 0; i < stars.length; i++) {
+            
+            stars[i].y += stars[i].size;
+            
+            if(stars[i].y > HEIGHT) {
+                stars[i].id.remove();
+                stars.splice(i,1);
+                createRandomStar();
+            }
+
+            stars[i].render();
+        }
+        if(!player.removed) {
+            player.tick();
+            player.render();
+        }
+        bulletGenerator.tick(player);
+        let bullets = bulletGenerator.bullets;
+        enemyGenerator.tick(player, bullets);
+        explosionManager.tick();
+
+        xshake*=0.9;
+        let xshakeChoice = [xshake, -xshake][Math.floor(Math.random()*2)];
+        
+        document.getElementById("painel").style.left = 0 + xshakeChoice + 'px';
+    }
+</script>
+</body>
+</html>
