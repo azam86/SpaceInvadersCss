@@ -175,7 +175,7 @@
     </div>
 </div>
 <button onmouseup="startGame()" id="start">Iniciar</button>
-<button onmousedown="playerLeft(true)" onmouseup="playerLeft(false)" onmouseleave="playerLeft(false)">←</button>
+<button ontouchstart="playerLeft(true)" ontouchend="playerLeft(false)" onmousedown="playerLeft(true)" onmouseup="playerLeft(false)" onmouseleave="playerLeft(false)">←</button>
 <button onmousedown="playerRight(true)" onmouseup="playerRight(false)" onmouseleave="playerRight(false)">→</button>
 <button onmousedown="playerShot()">Atirar</button>
 <div id="dicas">
